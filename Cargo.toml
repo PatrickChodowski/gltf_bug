@@ -1,0 +1,38 @@
+[package]
+name = "repro"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bevy = "0.15.0"
+
+[workspace]
+resolver = "2" # Important! wgpu/Bevy needs this!
+
+# Enable a small amount of optimization in debug mode
+[profile.dev]
+debug = 0
+strip = "debuginfo"
+opt-level = 1
+# overflow-checks = false # Uncomment for better math performance
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+strip = true
+
+# Profile for distribution
+[profile.dist]
+inherits = "release"
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
+
+# Enable high optimizations for dependencies (incl. Bevy), but not for our code:
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.dev.package.wgpu-types]
+debug-assertions = false
